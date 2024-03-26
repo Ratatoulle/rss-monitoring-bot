@@ -29,7 +29,9 @@ class DBHelper:
         self.session.commit()
 
     def add_rss_item(self, **kwargs):
-        pass
+        rss_item = RSSItem(**kwargs)
+        self.session.add(rss_item)
+        self.session.commit()
 
 
 
