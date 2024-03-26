@@ -35,6 +35,7 @@ class DBHelper:
         self.session.add(subscription)
         self.session.commit()
 
+    # TODO: заполнить таблицы настоящими значениями, проверить работоспособность получения записей
     def get_rss_items(self, resource: Resource, delta: datetime.timedelta = datetime.timedelta(hours=1)) -> list[RSSItem]:
         now = datetime.datetime.now()
         rss_items = self.session.execute(select(RSSItem).where(RSSItem.resource == resource))
