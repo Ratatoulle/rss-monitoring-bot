@@ -33,6 +33,13 @@ class DBHelper:
         self.session.add(rss_item)
         self.session.commit()
 
+    def add_subscription(self, user: User, resource: Resource):
+        subscription = Subscription(user=user, resource=resource)
+        self.session.add(subscription)
+        self.session.commit()
+
+
+
 
 
 if __name__ == "__main__":
