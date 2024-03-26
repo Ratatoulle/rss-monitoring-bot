@@ -19,23 +19,19 @@ class DBHelper:
         self.session: Session = Session(self.engine)
         Base.metadata.create_all(self.engine)
 
-    def add_user(self, id: int, name: str):
-        user = User(id=id, name=name)
+    def add_user(self, user: User):
         self.session.add(user)
         self.session.commit()
 
-    def add_resource(self, url: str):
-        resource = Resource(url=url)
+    def add_resource(self, resource: Resource):
         self.session.add(resource)
         self.session.commit()
 
-    def add_rss_item(self, **kwargs):
-        rss_item = RSSItem(**kwargs)
+    def add_rss_item(self, rss_item: RSSItem):
         self.session.add(rss_item)
         self.session.commit()
 
-    def add_subscription(self, user: User, resource: Resource):
-        subscription = Subscription(user=user, resource=resource)
+    def add_subscription(self, subscription: Subscription):
         self.session.add(subscription)
         self.session.commit()
 
