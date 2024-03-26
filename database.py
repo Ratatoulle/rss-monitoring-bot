@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, URL, select, and_, update
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
+import datetime
 
 import os
 from dotenv import load_dotenv
@@ -38,9 +39,14 @@ class DBHelper:
         self.session.add(subscription)
         self.session.commit()
 
-    def get_rss_items(self, resource: Resource):
-        rss_items = self.session.execute(select(RSSItem).where(RSSItem.resource == resource))
+    def get_rss_items(self, resource: Resource, delta: datetime.timedelta) -> list[RSSItem]:
+        now = datetime.datetime.now()
+        rss_items = self.session.execute(select(RSSItem).where(
+            and_(RSSItem.resource == resource,
+                 now - RSSItem.pub_date <= delta)
+        ))
         return rss_items
+
 
 
 
