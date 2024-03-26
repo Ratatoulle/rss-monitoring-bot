@@ -38,6 +38,9 @@ class DBHelper:
         self.session.add(subscription)
         self.session.commit()
 
+    def get_rss_items(self, resource: Resource):
+        rss_items = self.session.execute(select(RSSItem).where(RSSItem.resource == resource))
+        return rss_items
 
 
 

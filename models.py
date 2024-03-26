@@ -19,7 +19,10 @@ class User(Base):
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
     name: Mapped[str] = mapped_column(TEXT)
 
-    subscriptions: Mapped[List["Subscription"]] = relationship(back_populates="user")
+    subscriptions: Mapped[List["Subscription"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
 
 class Resource(Base):
