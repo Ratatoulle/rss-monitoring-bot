@@ -39,16 +39,14 @@ class DBHelper:
         self.session.add(subscription)
         self.session.commit()
 
-    def get_rss_items(self, resource: Resource, delta: datetime.timedelta) -> list[RSSItem]:
+    def get_rss_items(self, resource: Resource, delta: datetime.timedelta = datetime.timedelta(hours=1)) -> list[RSSItem]:
         now = datetime.datetime.now()
-        rss_items = self.session.execute(select(RSSItem).where(
-            and_(RSSItem.resource == resource,
-                 now - RSSItem.pub_date <= delta)
-        ))
-        return rss_items
-
-
-
+        rss_items = self.session.execute(select(RSSItem).where(RSSItem.resource == resource))
+        suitable_items = []
+        for item in rss_items:
+            if now - item.pub_date <= delta:
+                suitable_items.append(item)
+        return suitable_items
 
 
 if __name__ == "__main__":
