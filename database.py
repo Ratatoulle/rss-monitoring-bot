@@ -51,7 +51,6 @@ class DBHelper:
         return list(self.session.scalars(select(Resource)))
 
 
-
 if __name__ == "__main__":
     helper = DBHelper()
 
