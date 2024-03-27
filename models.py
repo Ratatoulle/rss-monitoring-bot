@@ -7,6 +7,7 @@ from sqlalchemy.orm import (
     relationship,
 )
 from typing import List
+from dataclasses import dataclass
 
 
 class Base(DeclarativeBase):
@@ -44,6 +45,7 @@ class Subscription(Base):
     resource: Mapped["Resource"] = relationship(back_populates="subscriptions")
 
 
+@dataclass
 class RSSItem(Base):
     __tablename__ = "rss_item"
 

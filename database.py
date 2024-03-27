@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, URL, select, and_, update
+from sqlalchemy import create_engine, URL, select
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 import datetime
@@ -35,15 +35,21 @@ class DBHelper:
         self.session.add(subscription)
         self.session.commit()
 
-    # TODO: заполнить таблицы настоящими значениями, проверить работоспособность получения записей
     def get_rss_items(self, resource: Resource, delta: datetime.timedelta = datetime.timedelta(hours=1)) -> list[RSSItem]:
         now = datetime.datetime.now()
-        rss_items = self.session.execute(select(RSSItem).where(RSSItem.resource == resource))
+        rss_items = self.session.scalars(select(RSSItem).where(RSSItem.resource == resource))
         suitable_items = []
         for item in rss_items:
             if now - item.pub_date <= delta:
                 suitable_items.append(item)
         return suitable_items
+
+    def get_resource(self, url: str) -> Resource:
+        return self.session.scalar(select(Resource).where(Resource.url == url))
+
+    def get_all_resources(self) -> list[Resource]:
+        return list(self.session.scalars(select(Resource)))
+
 
 
 if __name__ == "__main__":
