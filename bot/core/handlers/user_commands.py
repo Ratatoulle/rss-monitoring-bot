@@ -18,6 +18,11 @@ async def add_resource(message: Message, state: FSMContext):
     await state.set_state(Form.rss_link)
     await message.answer("Введите ссылку на источник:")
 
+@router.message(Form.rss_link)
+async def form_rss_link(message: Message, state: FSMContext):
+    await state.update_data(rss_link=message.text)
+    await state.set_state(Form.is_rss_valid)
+    await message.answer("Проверяем источник...")
 
 @router.message(Command("get_news_1h"))
 async def get_news_1h(message: Message):
