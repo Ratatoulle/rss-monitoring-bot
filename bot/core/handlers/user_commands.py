@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
+from ..utils import Form
 from ..keyboards import reply
 
 router = Router()
@@ -13,7 +14,8 @@ async def start(message: Message):
 
 
 @router.message(Command("add_resource"))
-async def add_resource(message: Message):
+async def add_resource(message: Message, state: FSMContext):
+    await state.set_state(Form.rss_link)
     await message.answer("Введите ссылку на источник:")
 
 
