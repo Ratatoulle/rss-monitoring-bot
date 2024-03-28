@@ -2,6 +2,8 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
+from monitoring import fetch_data
+from database import DBHelper
 from ..utils import Form
 from ..keyboards import reply
 
@@ -24,6 +26,12 @@ async def form_rss_link(message: Message, state: FSMContext):
     await state.update_data(rss_link=message.text)
     await state.set_state(Form.is_rss_valid)
     await message.answer("Проверяем источник...")
+    data = fetch_data(message.text)
+    if not data:
+        await message.answer("Невозможно прочитать источник")
+    else:
+        helper = DBHelper()
+        helper.add_rss_item(RSSItem())
 
 
 @router.message(Command("get_news_1h"))

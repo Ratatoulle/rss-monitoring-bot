@@ -4,16 +4,17 @@ from models import RSSItem
 import feedparser
 
 
+def fetch_data(cls, url) -> bool | feedparser.FeedParserDict:
+    data = feedparser.parse(url)
+    if data.bozo:
+        return False
+
+
 class Monitor:
 
     def __init__(self):
         self.helper = DBHelper()
 
-    @classmethod
-    def fetch_data(cls, url) -> bool | feedparser.FeedParserDict:
-        data = feedparser.parse(url)
-        if data.bozo:
-            return False
 
     def update_table(self):
         for resource in self.helper.get_all_resources():
