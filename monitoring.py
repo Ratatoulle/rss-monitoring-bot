@@ -9,11 +9,15 @@ class Monitor:
     def __init__(self):
         self.helper = DBHelper()
 
+    @classmethod
+    def fetch_data(cls, url) -> bool | feedparser.FeedParserDict:
+        data = feedparser.parse(url)
+        if data.bozo:
+            return False
+
     def update_table(self):
         for resource in self.helper.get_all_resources():
-            data = feedparser.parse(resource.url)
-            if data.bozo:
-                raise Exception("Ill-formed XML file.")
+            data = self.fetch_data(resource.url)
             for entry in data.entries:
                 # safe method to get value from dict
                 guid = entry.get("guid")
