@@ -1,4 +1,6 @@
-from sqlalchemy import create_engine, URL, select
+from typing import Any
+
+from sqlalchemy import create_engine, URL, select, ScalarResult
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 import datetime
@@ -47,7 +49,7 @@ class DBHelper:
     def get_resource(self, url: str) -> Resource:
         return self.session.scalar(select(Resource).where(Resource.url == url))
 
-    def get_all_resources(self) -> list[Resource]:
+    def get_all_resources(self) -> ScalarResult[Resource]:
         return self.session.scalars(select(Resource))
 
 
