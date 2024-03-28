@@ -10,8 +10,7 @@ class Monitor:
         self.helper = DBHelper()
 
     def update_table(self):
-        resources = self.helper.get_all_resources()
-        for resource in resources:
+        for resource in self.helper.get_all_resources():
             data = feedparser.parse(resource.url)
             if data.bozo:
                 raise Exception("Ill-formed XML file.")

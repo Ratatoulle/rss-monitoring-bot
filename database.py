@@ -48,7 +48,7 @@ class DBHelper:
         return self.session.scalar(select(Resource).where(Resource.url == url))
 
     def get_all_resources(self) -> list[Resource]:
-        return list(self.session.scalars(select(Resource)))
+        return self.session.scalars(select(Resource))
 
 
 if __name__ == "__main__":
