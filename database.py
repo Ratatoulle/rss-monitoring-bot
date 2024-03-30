@@ -50,13 +50,13 @@ class DBHelper:
         except IntegrityError:
             self.session.rollback()
 
-    def get_rss_items(self, resource: Resource, delta: datetime.timedelta = datetime.timedelta(hours=1)) -> Iterator[RSSItem]:
+    def get_rss_items(self, resource: Resource, delta: datetime.timedelta = datetime.timedelta(hours=1), limit: int =
+    5):
         now = datetime.datetime.now()
-        rss_items = self.session.scalars(select(RSSItem).where(RSSItem.resource_url == resource.url))
-        # suitable_items = []
-        for item in rss_items:
-            if now - item.pub_date <= delta:
-                yield item
+        time_ago = now - delta
+        rss_items = self.session.scalars(select(RSSItem).where(RSSItem.resource_url == resource.url).filter(
+            RSSItem.pub_date > time_ago).limit(limit))
+        return list(rss_items)
 
     def get_resource(self, url: str) -> Resource:
         return self.session.scalar(select(Resource).where(Resource.url == url))
@@ -65,7 +65,7 @@ class DBHelper:
         return self.session.scalar(select(User).where(User.id == user_id))
 
     def get_user_subscriptions(self, user_id: int):
-        return self.session.scalars(select(Subscription).where(User.id == user_id))
+        return self.session.scalars(select(Subscription).where(Subscription.user_id == user_id))
 
     def get_all_resources(self) -> ScalarResult[Resource]:
         return self.session.scalars(select(Resource))

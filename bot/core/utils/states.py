@@ -7,5 +7,6 @@ class AddResource(StatesGroup):
 
 
 class GetNews(StatesGroup):
-    is_separately = State()
+    all_or_separately = State()
     choose_resource = State()
+    delta = State()

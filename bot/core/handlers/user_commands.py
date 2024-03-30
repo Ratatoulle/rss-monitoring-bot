@@ -6,6 +6,7 @@ from monitoring import fetch_data
 from database import DBHelper
 from models import RSSItem, User, Resource, Subscription
 from aiogram.utils.markdown import hbold, hitalic
+from aiogram.types.reply_keyboard_remove import ReplyKeyboardRemove
 import datetime
 from ..keyboards import reply
 from ..utils import states
@@ -51,32 +52,74 @@ async def form_rss_url(message: Message, state: FSMContext):
         await message.answer("Подписка на источник успешно оформлена!")
 
 
-@router.message(Command("get_news_1h"))
-async def get_news_1h(message: Message):
-    helper = DBHelper()
-    user_id = message.from_user.id
-    current_user = helper.get_user(user_id=user_id)
-    for subscription in current_user.subscriptions:
-        for item in helper.get_rss_items(subscription.resource):
-            await message.answer(f"{hbold(item.title)}\n"
-                                 f"{item.pub_date}\n"
-                                 f"{item.description if item.description else 'Нет описания'}\n"
-                                 f"{item.link}\n"
-                                 )
+async def get_news_common(message: Message, state: FSMContext):
+    await state.set_state(states.GetNews.all_or_separately)
+    await message.answer("Вывести новости из всех источников или из отдельного?", reply_markup=reply.separate_or_all)
 
 
-@router.message(Command("get_news_24h"))
-async def get_news_24h(message: Message):
+@router.message(states.GetNews.all_or_separately, F.text.casefold() == "отдельный источник")
+async def separate_resource(message: Message, state: FSMContext):
+    await state.set_state(states.GetNews.choose_resource)
     helper = DBHelper()
-    user_id = message.from_user.id
-    current_user = helper.get_user(user_id=user_id)
-    for subscription in current_user.subscriptions:
-        for item in helper.get_rss_items(subscription.resource, delta=datetime.timedelta(hours=24)):
+    subscriptions = list(helper.get_user_subscriptions(user_id=message.from_user.id))
+    await message.answer("Выберите источник", reply_markup=reply.list_user_subscriptions(subscriptions))
+
+
+@router.message(states.GetNews.choose_resource)
+async def choose_resource(message: Message, state: FSMContext):
+    data = await state.get_data()
+    await state.clear()
+    helper = DBHelper()
+    resource = helper.get_resource(message.text)
+    if not resource:
+        await message.answer("Невозможно прочитать источник.")
+        await state.clear()
+    rss_items = helper.get_rss_items(resource=resource, delta=data["delta"])
+    if rss_items:
+        for item in rss_items:
             await message.answer(f"{hbold(item.title)}\n"
                                  f"{hitalic(item.pub_date)}\n"
                                  f"{item.description if item.description else 'Нет описания'}\n"
-                                 f"{item.link}"
+                                 f"{item.link}\n",
+                                 reply_markup=ReplyKeyboardRemove(remove_keyboard=True)
                                  )
+    else:
+        await message.answer(f"Нет новостей для {resource.url} :(",
+                             reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
+
+
+@router.message(states.GetNews.all_or_separately, F.text.casefold() == "все")
+async def all_resources(message: Message, state: FSMContext):
+    helper = DBHelper()
+    data = await state.get_data()
+    await state.clear()
+    user_id = message.from_user.id
+    current_user = helper.get_user(user_id=user_id)
+    for subscription in current_user.subscriptions:
+        rss_items = helper.get_rss_items(subscription.resource, delta=data["delta"])
+        if rss_items:
+            for item in rss_items:
+                await message.answer(f"{hbold(item.title)}\n"
+                                     f"{hitalic(item.pub_date)}\n"
+                                     f"{item.description if item.description else 'Нет описания'}\n"
+                                     f"{item.link}\n",
+                                     reply_markup=ReplyKeyboardRemove(remove_keyboard=True)
+                                     )
+        else:
+            await message.answer(f"Нет новостей для {subscription.resource.url} :(",
+                                 reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
+
+
+@router.message(Command("get_news_1h"))
+async def get_news_1h(message: Message, state: FSMContext):
+    await state.update_data(delta=datetime.timedelta(hours=1))
+    await get_news_common(message=message, state=state)
+
+
+@router.message(Command("get_news_24h"))
+async def get_news_24h(message: Message, state: FSMContext):
+    await state.update_data(delta=datetime.timedelta(hours=24))
+    await get_news_common(message=message, state=state)
 
 
 @router.message(Command("help"))

@@ -1,5 +1,4 @@
 from database import DBHelper
-from sqlalchemy.exc import IntegrityError
 from models import RSSItem
 import feedparser
 

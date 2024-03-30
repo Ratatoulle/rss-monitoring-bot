@@ -6,6 +6,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
+from utils import remove_html_tags
 from typing import List
 from dataclasses import dataclass
 
@@ -63,7 +64,7 @@ class RSSItem(Base):
         self.guid = entry.get("guid")
         self.title = entry.get("title")
         self.link = entry.get("link")
-        self.description = entry.get("description")
+        self.description = remove_html_tags(entry.get("description"))
         self.category = entry.get("category")
         self.pub_date = entry.get("pubDate")
         self.resource_url = resource_url
