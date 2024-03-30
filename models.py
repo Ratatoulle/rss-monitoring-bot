@@ -59,13 +59,14 @@ class RSSItem(Base):
 
     resource: Mapped["Resource"] = relationship(back_populates="rss_items")
 
-    def __init__(self, entry: dict):
+    def __init__(self, entry: dict, resource_url: str):
         self.guid = entry.get("guid")
         self.title = entry.get("title")
         self.link = entry.get("link")
         self.description = entry.get("description")
         self.category = entry.get("category")
         self.pub_date = entry.get("pubDate")
+        self.resource_url = resource_url
 
         if not self.pub_date:
             self.pub_date = entry.get("published")

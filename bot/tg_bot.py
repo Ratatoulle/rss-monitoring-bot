@@ -3,12 +3,13 @@ import logging
 import sys
 
 from aiogram import Bot, Dispatcher
+from aiogram.enums import ParseMode
 from core.settings import settings
 from core.handlers import user_commands
 
 
 async def main():
-    bot = Bot(settings.bot.token)
+    bot = Bot(settings.bot.token, parse_mode=ParseMode.HTML)
     dp = Dispatcher()
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
 

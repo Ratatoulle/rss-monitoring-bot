@@ -20,14 +20,11 @@ class Monitor:
         for resource in self.helper.get_all_resources():
             data = fetch_data(resource.url)
             if not data:
-                raise Exception("Ill-formed XML file.")
+                continue
+                # raise Exception("Ill-formed XML file.")
             for entry in data.entries:
-                new_item = RSSItem(entry)
-                try:
-                    self.helper.add_rss_item(new_item)
-                except IntegrityError:
-                    self.helper.session.rollback()
-                    continue
+                new_item = RSSItem(entry, resource.url)
+                self.helper.add_rss_item(new_item)
 
 
 def main():

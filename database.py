@@ -39,7 +39,8 @@ class DBHelper:
         try:
             self.session.add(rss_item)
             self.session.commit()
-        except IntegrityError:
+        except IntegrityError as e:
+            print(e)
             self.session.rollback()
 
     def add_subscription(self, subscription: Subscription):
@@ -51,7 +52,7 @@ class DBHelper:
 
     def get_rss_items(self, resource: Resource, delta: datetime.timedelta = datetime.timedelta(hours=1)) -> Iterator[RSSItem]:
         now = datetime.datetime.now()
-        rss_items = self.session.scalars(select(RSSItem).where(RSSItem.resource == resource))
+        rss_items = self.session.scalars(select(RSSItem).where(RSSItem.resource_url == resource.url))
         # suitable_items = []
         for item in rss_items:
             if now - item.pub_date <= delta:
@@ -62,6 +63,9 @@ class DBHelper:
 
     def get_user(self, user_id: int) -> User:
         return self.session.scalar(select(User).where(User.id == user_id))
+
+    def get_user_subscriptions(self, user_id: int):
+        return self.session.scalars(select(Subscription).where(User.id == user_id))
 
     def get_all_resources(self) -> ScalarResult[Resource]:
         return self.session.scalars(select(Resource))
