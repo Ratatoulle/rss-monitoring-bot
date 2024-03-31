@@ -2,9 +2,9 @@ from aiogram import Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from monitoring import fetch_data
-from database import DBHelper
-from models import RSSItem, User, Resource, Subscription
+from monitoring.monitoring import fetch_data
+from database.database import DBHelper
+from database.models import User, Resource, Subscription
 from aiogram.utils.markdown import hbold, hitalic
 from aiogram.types.reply_keyboard_remove import ReplyKeyboardRemove
 import datetime

@@ -1,5 +1,5 @@
-from database import DBHelper
-from models import RSSItem
+from database.database import DBHelper
+from database.models import RSSItem
 import feedparser
 
 
