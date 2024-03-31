@@ -7,7 +7,7 @@ import datetime
 import os
 from dotenv import load_dotenv
 
-from models import Base, Resource, User, Subscription, RSSItem
+from database.models import Base, Resource, User, Subscription, RSSItem
 
 
 class DBHelper:

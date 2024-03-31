@@ -6,7 +6,7 @@ from sqlalchemy.orm import (
     mapped_column,
     relationship,
 )
-from utils import remove_html_tags
+from database.utils import remove_html_tags
 from typing import List
 from dataclasses import dataclass
 
