@@ -20,7 +20,6 @@ class Monitor:
             data = fetch_data(resource.url)
             if not data:
                 continue
-                # raise Exception("Ill-formed XML file.")
             for entry in data.entries:
                 new_item = RSSItem(entry, resource.url)
                 self.helper.add_rss_item(new_item)

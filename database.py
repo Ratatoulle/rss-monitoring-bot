@@ -54,8 +54,10 @@ class DBHelper:
     5):
         now = datetime.datetime.now()
         time_ago = now - delta
-        rss_items = self.session.scalars(select(RSSItem).where(RSSItem.resource_url == resource.url).filter(
-            RSSItem.pub_date > time_ago).limit(limit))
+        rss_items = self.session.scalars(select(RSSItem)
+                                         .where(RSSItem.resource_url == resource.url)
+                                         .filter(RSSItem.pub_date > time_ago)
+                                         .limit(limit))
         return list(rss_items)
 
     def get_resource(self, url: str) -> Resource:

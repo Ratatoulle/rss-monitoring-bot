@@ -18,14 +18,18 @@ router = Router()
 async def start(message: Message):
     new_user = User(id=message.from_user.id, name=message.from_user.full_name)
     helper = DBHelper()
-    helper.add_user(new_user)
-    await message.answer(f"Hello, {message.from_user.full_name}!", reply_markup=reply.main)
+    if helper.get_user(user_id=message.from_user.id):
+        await message.answer(f"Нет необходимости в регистрации, вы уже в базе данных.")
+    else:
+        helper.add_user(new_user)
+        await message.answer(f"Привет, {message.from_user.full_name}!"
+                             f"Запись о тебе успешно занесена в базу данных.")
 
 
 @router.message(Command("add_resource"))
 async def add_resource(message: Message, state: FSMContext):
     await state.set_state(states.AddResource.rss_url)
-    await message.answer("Введите ссылку на источник:")
+    await message.answer("Введите ссылку на источник")
 
 
 @router.message(states.AddResource.rss_url)
