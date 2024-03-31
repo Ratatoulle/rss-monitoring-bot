@@ -17,8 +17,8 @@ main = ReplyKeyboardMarkup(
             KeyboardButton(text="Помощь"),
         ]
     ],
-    resize_keyboard=True,  # адаптировать размер клавиатуры
-    one_time_keyboard=True,  # скрыть клавиатуру после первого использования
+    resize_keyboard=True,
+    one_time_keyboard=True,
     input_field_placeholder="Выберите действие из меню"
 )
 
