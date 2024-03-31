@@ -71,17 +71,3 @@ class DBHelper:
 
     def get_all_resources(self) -> ScalarResult[Resource]:
         return self.session.scalars(select(Resource))
-
-
-if __name__ == "__main__":
-    helper = DBHelper()
-
-load_dotenv()
-db_info = {name: value for name, value in os.environ.items() if "DB" in name}
-url = URL.create(*db_info.values())
-engine = create_engine(url, echo=True)
-s = Session(engine)
-Base.metadata.create_all(engine)
-
-# from models import Base, Resource, User, Subscription, RSSItem
-# from database import s
