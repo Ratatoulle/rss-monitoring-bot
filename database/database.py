@@ -2,7 +2,6 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import create_engine, URL, select, ScalarResult
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
-from typing import Iterator
 import datetime
 
 import os
