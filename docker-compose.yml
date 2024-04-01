@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+
+  monitoring:
+    container_name: monitoring
+    build:
+      dockerfile: ./monitoring/Dockerfile
+    command:
+      python monitoring/monitoring.py
+    environment:
+      - DB_DRIVERNAME=${DB_DRIVERNAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=pgdb
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+    depends_on:
+      - postgres_db
+    restart: on-failure
+
+
+  tg_bot:
+    container_name: tg_bot
+    build:
+      dockerfile: ./bot/Dockerfile
+    command:
+      python bot/tg_bot.py
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DB_DRIVERNAME=${DB_DRIVERNAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=pgdb
+      - DB_PORT=${DB_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+    depends_on:
+      - postgres_db
+      - monitoring
+
+
+  postgres_db:
+    image: postgres:latest
+    container_name: pgdb
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - "./dump/:/docker-entrypoint-initdb.d/"

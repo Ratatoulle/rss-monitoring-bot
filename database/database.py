@@ -15,7 +15,14 @@ class DBHelper:
     def __init__(self):
         load_dotenv()
         self._db_info: dict = {name: value for name, value in os.environ.items() if "DB" in name}
-        self._url: URL = URL.create(*self._db_info.values())
+        self._url: URL = URL.create(
+            drivername=self._db_info['DB_DRIVERNAME'],
+            username=self._db_info['DB_USERNAME'],
+            password=self._db_info['DB_PASSWORD'],
+            host=self._db_info['DB_HOST'],
+            port=self._db_info['DB_PORT'],
+            database=self._db_info['DB_DATABASE'],
+        )
         self.engine: Engine = create_engine(self._url, echo=True if __debug__ else False)
         self.session: Session = Session(self.engine)
         Base.metadata.create_all(self.engine)
@@ -49,8 +56,7 @@ class DBHelper:
         except IntegrityError:
             self.session.rollback()
 
-    def get_rss_items(self, resource: Resource, delta: datetime.timedelta = datetime.timedelta(hours=1), limit: int =
-    5):
+    def get_rss_items(self, resource: Resource, delta: datetime.timedelta = datetime.timedelta(hours=1), limit: int =5):
         now = datetime.datetime.now()
         time_ago = now - delta
         rss_items = self.session.scalars(select(RSSItem)
