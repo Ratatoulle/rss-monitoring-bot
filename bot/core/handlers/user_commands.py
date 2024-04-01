@@ -66,7 +66,10 @@ async def separate_resource(message: Message, state: FSMContext):
     await state.set_state(states.GetNews.choose_resource)
     helper = DBHelper()
     subscriptions = list(helper.get_user_subscriptions(user_id=message.from_user.id))
-    await message.answer("Выберите источник", reply_markup=reply.list_user_subscriptions(subscriptions))
+    if not subscriptions:
+        await message.answer("Вы не подписаны ни на один источник.")
+    else:
+        await message.answer("Выберите источник", reply_markup=reply.list_user_subscriptions(subscriptions))
 
 
 @router.message(states.GetNews.choose_resource)

@@ -23,6 +23,7 @@ class DBHelper:
             port=self._db_info['DB_PORT'],
             database=self._db_info['DB_DATABASE'],
         )
+        # self._url: URL = URL.create(*self._db_info.values())
         self.engine: Engine = create_engine(self._url, echo=True if __debug__ else False)
         self.session: Session = Session(self.engine)
         Base.metadata.create_all(self.engine)
