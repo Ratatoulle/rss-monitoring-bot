@@ -1,0 +1,9 @@
+https://dostup1.ru/rss/
+http://static.feed.rbc.ru/rbc/logical/footer/news.rss
+https://ura.news/rss
+https://pravmin.gov74.ru/prav/rss/news.htm
+https://www.kommersant.ru/RSS/main.xml
+https://www.rg.ru/xml/index.xml
+https://rss.nytimes.com/services/xml/rss/nyt/World.xml
+https://www.retail.ru/rss/news/
+https://www.theguardian.com/international/rss
