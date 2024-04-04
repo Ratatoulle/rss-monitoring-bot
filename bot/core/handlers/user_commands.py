@@ -16,6 +16,9 @@ router = Router()
 
 @router.message(CommandStart())
 async def start(message: Message):
+    """
+        /start command handler
+    """
     new_user = User(id=message.from_user.id, name=message.from_user.full_name)
     helper = DBHelper()
     if helper.get_user(user_id=message.from_user.id):
@@ -28,12 +31,18 @@ async def start(message: Message):
 
 @router.message(Command("add_resource"))
 async def add_resource(message: Message, state: FSMContext):
+    """
+        /add_resource command handler
+    """
     await state.set_state(states.AddResource.rss_url)
     await message.answer("Введите ссылку на источник")
 
 
 @router.message(states.AddResource.rss_url)
 async def form_rss_url(message: Message, state: FSMContext):
+    """
+        Method for handling state, when user sends URL of RSS resource
+    """
     rss_url = message.text
     await state.update_data(rss_url=rss_url)
     await state.set_state(states.AddResource.is_rss_valid)
@@ -57,12 +66,18 @@ async def form_rss_url(message: Message, state: FSMContext):
 
 
 async def get_news_common(message: Message, state: FSMContext):
+    """
+        Method for asking user how he wants the news to be displayed: all or separately
+    """
     await state.set_state(states.GetNews.all_or_separately)
     await message.answer("Вывести новости из всех источников или из отдельного?", reply_markup=reply.separate_or_all)
 
 
 @router.message(states.GetNews.all_or_separately, F.text.casefold() == "отдельный источник")
 async def separate_resource(message: Message, state: FSMContext):
+    """
+        Method for handling state, when user chooses separate resource option for displaying news
+    """
     await state.set_state(states.GetNews.choose_resource)
     helper = DBHelper()
     subscriptions = list(helper.get_user_subscriptions(user_id=message.from_user.id))
@@ -74,6 +89,9 @@ async def separate_resource(message: Message, state: FSMContext):
 
 @router.message(states.GetNews.choose_resource)
 async def choose_resource(message: Message, state: FSMContext):
+    """
+        Method for handling state, when user specifies resource for displaying news
+    """
     data = await state.get_data()
     await state.clear()
     helper = DBHelper()
@@ -97,6 +115,9 @@ async def choose_resource(message: Message, state: FSMContext):
 
 @router.message(states.GetNews.all_or_separately, F.text.casefold() == "все")
 async def all_resources(message: Message, state: FSMContext):
+    """
+        Method for handling state, when user chooses all resources for displaying news
+    """
     helper = DBHelper()
     data = await state.get_data()
     await state.clear()
@@ -119,16 +140,25 @@ async def all_resources(message: Message, state: FSMContext):
 
 @router.message(Command("get_news_1h"))
 async def get_news_1h(message: Message, state: FSMContext):
+    """
+        /get_news_1h command handler
+    """
     await state.update_data(delta=datetime.timedelta(hours=1))
     await get_news_common(message=message, state=state)
 
 
 @router.message(Command("get_news_24h"))
 async def get_news_24h(message: Message, state: FSMContext):
+    """
+        /get_news_24h command handler
+    """
     await state.update_data(delta=datetime.timedelta(hours=24))
     await get_news_common(message=message, state=state)
 
 
 @router.message(Command("help"))
 async def get_help(message: Message):
+    """
+        /help command handler
+    """
     await message.answer("Нажмите добавить источник и отправьте ссылку на RSS-источник для получения новостей.")
