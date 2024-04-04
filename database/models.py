@@ -16,6 +16,14 @@ class Base(DeclarativeBase):
 
 
 class User(Base):
+    """
+        ORM-class which represents user table in database
+
+        Attributes:
+            id (int): id of user
+            name (str): name of user
+            subscriptions (list): user subscriptions of RSS resources
+    """
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(BIGINT, primary_key=True)
@@ -28,6 +36,14 @@ class User(Base):
 
 
 class Resource(Base):
+    """
+        ORM-class which represents resource table in database
+
+        Attributes:
+            url (str): URL of RSS resource
+            subscriptions (list): list of subscriptions of current resource
+            rss_items (list): list of related to current resource RSS items
+    """
     __tablename__ = "resource"
 
     url: Mapped[str] = mapped_column(TEXT, primary_key=True)
@@ -37,6 +53,15 @@ class Resource(Base):
 
 
 class Subscription(Base):
+    """
+        ORM-class which represents association subscription table in database
+
+        Attributes:
+            user_id (int): id of user
+            resource_url (list): URL of RSS resource
+            user (User): User ORM-object
+            resource (Resource): Resource ORM-object
+    """
     __tablename__ = "subscription"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
@@ -48,6 +73,18 @@ class Subscription(Base):
 
 @dataclass
 class RSSItem(Base):
+    """
+        ORM-class which represents association subscription table in database
+
+        Attributes:
+            guid (str): GUID of RSS item
+            title (str): title of RSS item
+            link (str): link to news article
+            description (str): description of news article
+            pub_date (str): news article date of publication
+            resource_url (str): URL of RSS resource
+            resource (Resource): Resource ORM-object
+    """
     __tablename__ = "rss_item"
 
     guid: Mapped[str] = mapped_column(TEXT, primary_key=True)
@@ -56,11 +93,14 @@ class RSSItem(Base):
     description: Mapped[str | None] = mapped_column(TEXT)
     category: Mapped[str | None] = mapped_column(TEXT)
     pub_date = mapped_column(TIMESTAMP)
-    resource_url: Mapped[int] = mapped_column(ForeignKey("resource.url"))
+    resource_url: Mapped[str] = mapped_column(ForeignKey("resource.url"))
 
     resource: Mapped["Resource"] = relationship(back_populates="rss_items")
 
     def __init__(self, entry: dict, resource_url: str):
+        """
+            Safe constructor of initialization RSSItem fields
+        """
         self.guid = entry.get("guid")
         self.title = entry.get("title")
         self.link = entry.get("link")
