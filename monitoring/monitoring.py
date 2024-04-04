@@ -4,6 +4,9 @@ import feedparser
 
 
 def fetch_data(url) -> bool | feedparser.FeedParserDict:
+    """
+        Returns RSS data from URL if it's valid, otherwise False
+    """
     data = feedparser.parse(url)
     if data.bozo:
         return False
@@ -11,11 +14,16 @@ def fetch_data(url) -> bool | feedparser.FeedParserDict:
 
 
 class Monitor:
-
+    """
+        Class for monitoring (updating records) of database resources
+    """
     def __init__(self):
         self.helper = DBHelper()
 
     def update_table(self):
+        """
+            Main method of Monitor class, which updates table with new gathered information
+        """
         for resource in self.helper.get_all_resources():
             data = fetch_data(resource.url)
             if not data:
