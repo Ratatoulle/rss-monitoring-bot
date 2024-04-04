@@ -67,7 +67,8 @@ async def get_rss_url(message: Message, state: FSMContext):
 
 async def get_news_common(message: Message, state: FSMContext):
     """
-        Method for asking user how he wants the news to be displayed: all or separately
+        Method for asking user how he wants the news to be displayed: all or separately.
+        Common means for both (get_news_1h and get_news_24h) commands
     """
     await state.set_state(states.GetNews.all_or_separately)
     await message.answer("Вывести новости из всех источников или из отдельного?", reply_markup=reply.separate_or_all)
