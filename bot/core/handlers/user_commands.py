@@ -162,4 +162,10 @@ async def get_help(message: Message):
     """
         /help command handler
     """
-    await message.answer("Нажмите добавить источник и отправьте ссылку на RSS-источник для получения новостей.")
+    await message.answer("Доступные команды для бота:\n"
+                         "/start - зарегистрироваться в базе данных\n"
+                         "/add_resource - добавить RSS-источник в подписки\n"
+                         "/get_news_1h - получить новости за последний час\n"
+                         "/get_news_24h - получить новости за последние сутки\n"
+                         "/help - помощь"
+                         )
