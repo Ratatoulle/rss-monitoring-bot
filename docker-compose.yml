@@ -1,7 +1,6 @@
 version: '3.7'
 
 services:
-
   monitoring:
     container_name: monitoring
     build:
@@ -50,3 +49,8 @@ services:
       - POSTGRES_DB=${DB_DATABASE}
     volumes:
       - "./dump/:/docker-entrypoint-initdb.d/"
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+    external: true
