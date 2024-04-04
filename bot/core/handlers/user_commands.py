@@ -39,7 +39,7 @@ async def add_resource(message: Message, state: FSMContext):
 
 
 @router.message(states.AddResource.rss_url)
-async def form_rss_url(message: Message, state: FSMContext):
+async def get_rss_url(message: Message, state: FSMContext):
     """
         Method for handling state, when user sends URL of RSS resource
     """
