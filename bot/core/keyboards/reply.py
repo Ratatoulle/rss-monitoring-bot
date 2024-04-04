@@ -4,24 +4,6 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-main = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text="Добавить источник"),
-        ],
-        [
-            KeyboardButton(text="Получить новости за последний час"),
-            KeyboardButton(text="Получить новости за последние сутки"),
-        ],
-        [
-            KeyboardButton(text="Помощь"),
-        ]
-    ],
-    resize_keyboard=True,
-    one_time_keyboard=True,
-    input_field_placeholder="Выберите действие из меню"
-)
-
 separate_or_all = ReplyKeyboardMarkup(
     keyboard=[
         [
@@ -32,9 +14,15 @@ separate_or_all = ReplyKeyboardMarkup(
     resize_keyboard=True,
     one_time_keyboard=True,
 )
+"""
+    Keyboard with choice how user wants to display news
+"""
 
 
 def list_user_subscriptions(subscriptions: list):
+    """
+        Keyboard used to display user subscriptions in buttons
+    """
     builder = ReplyKeyboardBuilder()
     [builder.button(text=subscription.resource_url) for subscription in subscriptions]
     builder.adjust(*[1] * len(subscriptions))
