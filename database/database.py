@@ -1,5 +1,5 @@
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import create_engine, URL, select, ScalarResult
+from sqlalchemy import create_engine, URL, select, ScalarResult, desc
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 import datetime
@@ -63,6 +63,7 @@ class DBHelper:
         rss_items = self.session.scalars(select(RSSItem)
                                          .where(RSSItem.resource_url == resource.url)
                                          .filter(RSSItem.pub_date > time_ago)
+                                         .order_by(desc(RSSItem.pub_date))
                                          .limit(limit))
         return list(rss_items)
 
